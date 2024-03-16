@@ -1,7 +1,6 @@
-import { Inter } from 'next/font/google'
 import './globals.css'
+import { GlobalState } from '@/components/utility/globalState'
 
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
   title: 'Create Next App',
@@ -11,7 +10,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className="h-full overflow-y-hidden">
+        <GlobalState>
+          {children}
+        </GlobalState>
+      </body>
     </html>
   )
 }

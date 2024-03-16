@@ -43,6 +43,7 @@ export const useScroll = () => {
         }
 
         const isOverflow = e.target.scrollHeight > e.target.clientHeight;
+        console.log("handleScroll called, isOverflowing: ", isOverflow)
         setIsOverflowing(isOverflow);
     }, []);
 

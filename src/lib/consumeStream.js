@@ -1,12 +1,9 @@
-const consumeReadableStream = async (
+export const consumeReadableStream = async (
     stream,
-    callback,
-    // signal: AbortSignal
+    callback
 ) => {
     const reader = stream.getReader()
     const decoder = new TextDecoder()
-
-    signal.addEventListener("abort", () => reader.cancel(), { once: true })
 
     try {
         while (true) {
@@ -30,5 +27,3 @@ const consumeReadableStream = async (
         reader.releaseLock()
     }
 }
-
-export default consumeReadableStream

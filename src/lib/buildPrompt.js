@@ -1,29 +1,7 @@
 import { encode } from "gpt-tokenizer";
 
-const buildBasePrompt = (
-    prompt,
-    profileContext,
-    workspaceInstructions,
-    assistant
-) => {
-    let fullPrompt = "";
-
-    if (assistant) {
-        fullPrompt +=
-            `<INJECT ROLE>\nYou are not an AI. You are ${assistant.name}.\n</INJECT ROLE>\n\n`;
-    }
-
-    fullPrompt += `Today is ${new Date().toLocaleDateString()}.\n\n`;
-
-    if (profileContext) {
-        fullPrompt += `User Info:\n${profileContext}\n\n`;
-    }
-
-    if (workspaceInstructions) {
-        fullPrompt += `System Instructions:\n${workspaceInstructions}\n\n`;
-    }
-
-    fullPrompt += `User Instructions:\n${prompt}`;
+const buildBasePrompt = () => {
+    let fullPrompt = "User Instructions:\n";
 
     return fullPrompt;
 };
@@ -36,29 +14,14 @@ function buildRetrievalText(fileItems) {
     return `You may use the following sources if needed to answer the user's question. If you don't know the answer, say "I don't know."\n\n${retrievalText}`
 }
 
-export async function buildFinalMessages(
-    payload,
-    profile,
-    chatImages
-) {
+export async function buildFinalMessages(payload) {
     const {
-        chatSettings,
-        workspaceInstructions,
-        chatMessages,
-        assistant,
-        messageFileItems,
-        chatFileItems
+        chatMessages
     } = payload
 
-    const BUILT_PROMPT = buildBasePrompt(
-        chatSettings.prompt,
-        chatSettings.includeProfileContext ? profile.profile_context || "" : "",
-        chatSettings.includeWorkspaceInstructions ? workspaceInstructions : "",
-        assistant
-    )
-
-    const CHUNK_SIZE = chatSettings.contextLength
-    const PROMPT_TOKENS = encode(chatSettings.prompt).length
+    const BUILT_PROMPT = buildBasePrompt()
+    const CHUNK_SIZE = 512
+    const PROMPT_TOKENS = 1024
 
     let remainingTokens = CHUNK_SIZE - PROMPT_TOKENS
 
@@ -70,27 +33,6 @@ export async function buildFinalMessages(
 
         if (nextChatMessage === undefined) {
             return chatMessage
-        }
-
-        const nextChatMessageFileItems = nextChatMessage.fileItems
-
-        if (nextChatMessageFileItems.length > 0) {
-            const findFileItems = nextChatMessageFileItems
-                .map(fileItemId =>
-                    chatFileItems.find(chatFileItem => chatFileItem.id === fileItemId)
-                )
-                .filter(item => item !== undefined)
-
-            const retrievalText = buildRetrievalText(findFileItems)
-
-            return {
-                message: {
-                    ...chatMessage.message,
-                    content:
-                        `${chatMessage.message.content}\n\n${retrievalText}`
-                },
-                fileItems: []
-            }
         }
 
         return chatMessage
@@ -116,8 +58,6 @@ export async function buildFinalMessages(
         content: BUILT_PROMPT,
         created_at: "",
         id: processedChatMessages.length + "",
-        image_paths: [],
-        model: payload.chatSettings.model,
         role: "system",
         sequence_number: processedChatMessages.length,
         updated_at: "",
@@ -127,52 +67,13 @@ export async function buildFinalMessages(
     finalMessages.unshift(tempSystemMessage)
 
     finalMessages = finalMessages.map(message => {
-        let content
-
-        if (message.image_paths.length > 0) {
-            content = [
-                {
-                    type: "text",
-                    text: message.content
-                },
-                ...message.image_paths.map(path => {
-                    let formedUrl = ""
-
-                    if (path.startsWith("data")) {
-                        formedUrl = path
-                    } else {
-                        const chatImage = chatImages.find(image => image.path === path)
-
-                        if (chatImage) {
-                            formedUrl = chatImage.base64
-                        }
-                    }
-
-                    return {
-                        type: "image_url",
-                        image_url: formedUrl
-                    }
-                })
-            ]
-        } else {
-            content = message.content
-        }
+        let content = message.content
 
         return {
             role: message.role,
             content
         }
     })
-
-    if (messageFileItems.length > 0) {
-        const retrievalText = buildRetrievalText(messageFileItems)
-
-        finalMessages[finalMessages.length - 1] = {
-            ...finalMessages[finalMessages.length - 1],
-            content: `${finalMessages[finalMessages.length - 1].content
-                }\n\n${retrievalText}`
-        }
-    }
 
     return finalMessages
 };

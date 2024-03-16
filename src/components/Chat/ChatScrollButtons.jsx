@@ -1,7 +1,4 @@
-import {
-    IconCircleArrowDownFilled,
-    IconCircleArrowUpFilled
-} from "@tabler/icons-react";
+import { ArrowUpCircleIcon, ArrowDownCircleIcon } from "@heroicons/react/24/outline";
 import React from "react";
 
 export const ChatScrollButtons = ({
@@ -14,7 +11,7 @@ export const ChatScrollButtons = ({
     return (
         <>
             {!isAtTop && isOverflowing && (
-                <IconCircleArrowUpFilled
+                <ArrowUpCircleIcon
                     className="cursor-pointer opacity-50 hover:opacity-100"
                     size={32}
                     onClick={scrollToTop}
@@ -22,12 +19,14 @@ export const ChatScrollButtons = ({
             )}
 
             {!isAtBottom && isOverflowing && (
-                <IconCircleArrowDownFilled
-                    className="cursor-pointer opacity-50 hover:opacity-100"
+                <ArrowDownCircleIcon
+                    className="text-black rounded-md border-2 w-10 p-1"
                     size={32}
                     onClick={scrollToBottom}
                 />
             )}
         </>
-    );
-};
+    )
+}
+
+

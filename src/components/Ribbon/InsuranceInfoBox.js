@@ -2,9 +2,9 @@
 
 const InsuranceInfoBox = ({ insurance_info }) => {
     return (
-        <div>
-            <p className="text-sm text-right font-medium leading-6 text-gray-500">Insurance: {insurance_info.provider} ({insurance_info.number})</p>
-            <p className="text-sm text-right font-medium leading-6 text-gray-500">Group: {insurance_info.group}</p>
+        <div className="text-right text-sm font-medium leading-6">
+            <p>Insurance: {insurance_info.provider} ({insurance_info.number})</p>
+            <p>Group: {insurance_info.group}</p>
         </div>
     );
 };

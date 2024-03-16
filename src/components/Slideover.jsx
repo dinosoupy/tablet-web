@@ -2,13 +2,11 @@ import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
-export const Slideover = ({ open, setOpen }) => {
 
+export const Slideover = ({ open, setOpen }) => {
     return (
         <Transition.Root show={open} as={Fragment}>
             <div className="absolute inset-y-0 z-10 w-full">
-                {/* <div className="fixed inset-0 overflow-hidden">
-                    <div className="absolute inset-0 overflow-hidden"> */}
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex max-w-full pr-10">
                     <Transition.Child
                         as={Fragment}
@@ -44,8 +42,6 @@ export const Slideover = ({ open, setOpen }) => {
                         </div>
                     </Transition.Child>
                 </div>
-                {/* </div>
-                </div> */}
             </div>
         </Transition.Root>
     )

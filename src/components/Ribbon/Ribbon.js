@@ -18,7 +18,7 @@ const insurance_info = {
 
 const Ribbon = () => {
     return (
-        <div className="mx-auto flex w-full bg-white px-4 py-4">
+        <div className="mx-auto flex w-full px-4 py-4">
             <div className='flex-1 justify-start'>
                 <PatientInfoBox patient_info={patient_info} />
             </div>

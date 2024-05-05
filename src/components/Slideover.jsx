@@ -2,7 +2,6 @@ import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
-
 export const Slideover = ({ open, setOpen }) => {
     return (
         <Transition.Root show={open} as={Fragment}>
